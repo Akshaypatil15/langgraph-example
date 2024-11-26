@@ -1,0 +1,54 @@
+volumes:
+  langgraph-data:
+    driver: local
+
+services:
+  # Redis service
+  langgraph-redis:
+    image: redis:6
+    container_name: langgraph-redis
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 1s
+      retries: 5
+    ports:
+      - "6379:6379" # Expose Redis on port 6379
+
+  # PostgreSQL service
+  langgraph-postgres:
+    image: postgres:16
+    container_name: langgraph-postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - langgraph-data:/var/lib/postgresql/data # Persistent storage for Postgres
+    ports:
+      - "5433:5432" # Expose Postgres on port 5433 (change if needed)
+    healthcheck:
+      test: pg_isready -U postgres
+      start_period: 10s
+      timeout: 1s
+      retries: 5
+      interval: 5s
+
+  # # LangGraph Server service
+  # langgraph-server:
+  #   build:
+  #     context: . # This tells Docker to build the image from the current directory (ensure you have the Dockerfile in the root)
+  #   container_name: langgraph-server
+  #   command: python my_agent/agent.py # Command to run your LangGraph application
+  #   env_file:
+  #     - .env # Optional: Ensure the .env file is used for environment variables
+  #   ports:
+  #     - "8123:8000" # Expose LangGraph server on port 8123
+  #   depends_on:
+  #     - langgraph-redis
+  #     - langgraph-postgres # Ensure LangGraph server waits for Redis and PostgreSQL to be available
+
+  #   healthcheck:
+  #     test: curl --silent --fail http://localhost:8000/health || exit 1 # Health check endpoint
+  #     interval: 30s
+  #     retries: 3
