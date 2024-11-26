@@ -1,0 +1,71 @@
+**Objective**: Implement a Dollar-Cost Averaging (DCA) strategy to purchase a cryptocurrency systematically over time using Uniswap and price data from CoinMarketCap.
+
+**Steps**:
+1. **Initialization**:
+   - Define the following parameters:
+     - Wallet address (required): Address used for transactions.
+     - Private key (required): Private key to sign transactions.
+     - Token to buy (e.g., ETH) (required): The target cryptocurrency to purchase.
+     - Base token (e.g., USDC) (required): The token used for payment.
+     - Total investment (required): The total amount to invest over the DCA period.
+     - Number of periods (required): The number of times to invest (e.g., weekly).
+     - Interval (required): Time interval between purchases (e.g., 7 days in seconds).
+
+2. **Fetch Price Data**:
+   - Use CoinMarketCap API to fetch the current price of the target cryptocurrency in USD.
+   - Validate that the price data is successfully retrieved.
+
+3. **Calculate Investment per Period**:
+   - Divide the total investment by the number of periods:
+     \[
+     \text{investment per period} = \frac{\text{total investment}}{\text{number of periods}}
+     \]
+   - Log the calculated investment amount for each period.
+
+4. **Convert Investment to Target Token**:
+   - Calculate the amount of target cryptocurrency to purchase in each period:
+     \[
+     \text{token amount} = \frac{\text{investment per period}}{\text{current price}}
+     \]
+
+5. **Fetch Best Swap Rate**:
+   - Use a DEX aggregator or Uniswap to fetch the best swap rate for the base token to the target token.
+   - Confirm the swap rate is feasible compared to the fetched price.
+
+6. **Perform Token Swap**:
+   - Execute the swap using Uniswap with the following parameters:
+     - Wallet address
+     - Private key
+     - Base token (e.g., USDC)
+     - Target token (e.g., ETH)
+     - Amount in (investment per period in base token)
+     - Amount out minimum (calculated minimum based on slippage tolerance)
+
+7. **Log Transaction Details**:
+   - Record the following after each swap:
+     - Transaction hash
+     - Amount of target tokens received
+     - Gas fees incurred
+
+8. **Wait for Next Interval**:
+   - Pause for the specified interval (e.g., 7 days).
+   - Notify the user of the time remaining until the next purchase.
+
+9. **Repeat Until Completion**:
+   - Continue the process until the total number of periods is completed.
+
+10. **Generate Summary Report**:
+    - Compile a report with the following:
+      - Total amount invested.
+      - Total tokens purchased.
+      - Average price per token.
+      - Total gas fees incurred.
+    - Present the final summary to the user.
+
+**Dependencies**:
+- Tools required:
+  - Get_Token_Price_CMC: Fetch token price from CoinMarketCap.
+  - Perform_Token_Swap: Execute swaps on Uniswap.
+  - Get_Best_Swap_Rate: Retrieve the best swap rate from DEX aggregators.
+  - Estimate_Gas_Fee: Estimate transaction gas fees.
+  - Ask_Human: Prompt the user for any missing information.
